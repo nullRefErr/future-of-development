@@ -1,5 +1,5 @@
 from dtos import CreateUserDto, LoginUserDto
-from repository.db import get_user_by_email, save_user
+from repository.user_collection import get_user_by_email, save_user
 from services.helper_service import is_valid_email, is_valid_age, generate_hash
 
 
