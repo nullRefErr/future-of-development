@@ -1,7 +1,7 @@
 from fastapi import APIRouter
 
 from controller.user_controller import create_user_action, login_user_action
-from dtos import CreateUserDto, LoginUserDto
+from models.user import CreateUserDto, LoginUserDto
 
 router = APIRouter()
 

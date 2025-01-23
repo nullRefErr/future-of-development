@@ -3,7 +3,6 @@ from pymongo.errors import ConnectionFailure
 import os
 from dotenv import load_dotenv
 
-from dtos import CreateUserDto
 
 load_dotenv()
 

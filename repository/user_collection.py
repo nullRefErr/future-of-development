@@ -1,4 +1,4 @@
-from dtos import CreateUserDto
+from models.user import CreateUserDto
 from repository.db import user_collection
 
 
