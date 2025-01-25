@@ -1,4 +1,4 @@
-from dtos import CreateUserDto, LoginUserDto
+from models.user import CreateUserDto, LoginUserDto
 from services.user_service import create_user, user_login
 
 
