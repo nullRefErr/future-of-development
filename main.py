@@ -1,13 +1,24 @@
 from fastapi import FastAPI
 
-from repository.db import startup
-from routers import user_router
+from routers import ai_router
 
-startup()
 app = FastAPI()
-app.include_router(user_router.router)
+app.include_router(ai_router.router)
 
 
 @app.get("/")
 async def root():
     return {"message": "Welcome to the FastAPI app!"}
+
+
+# block_number_by_id(id: str, phoneNumber: str) -> str:
+# """
+# Blocks numbers to call or message to the user.
+#
+# Args:
+#     id: this is the user id who wants to block given phone number.
+#     phoneNumber: Given phone number to block by id.
+#
+# Returns:
+#     A string message to describe the result of the action.
+# """

@@ -1,44 +1,33 @@
-from models.user import CreateUserDto, LoginUserDto
-from repository.user_collection import get_user_by_email, save_user
-from services.helper_service import is_valid_email, is_valid_age, generate_hash
+from repository.db import get_user_by_phone, get_user_by_id, get_status, get_trust_score, block_number
 
 
-def create_user(data: CreateUserDto):
-    is_email_valid = is_valid_email(data.email)
-    if is_email_valid not in [True]:
-        return {"message": "Invalid email!"}
-
-    is_age_valid = is_valid_age(data.age)
-    if is_age_valid not in [True]:
-        return {"message": "Invalid age!"}
-
-    check_user = get_user_by_email(data.email)
-    if check_user:
-        return {"message": "User already exists!"}
-
-    user_data = CreateUserDto(email=data.email, password="", name=data.name, age=data.age)
-    user_data.password = generate_hash(data.password)
-
-    save_user(user_data)
-
-    return {"message": "User created successfully!"}
+def getPhoneNumberInfo(phoneNumber):
+    user = get_user_by_phone(phoneNumber)
+    if user is not None:
+        return {"name": user["name"] + user["surname"], "email": user["email"], "phone": phoneNumber}
+    return {"message": "User not found!"}
 
 
-def user_login(data: LoginUserDto):
-    is_email_valid = is_valid_email(data.email)
-    if is_email_valid not in [True]:
-        return {"message": "Invalid email!"}
+def getIdInfo(userId):
+    user = get_user_by_id(userId)
+    if user is not None:
+        return {"name": user["name"] + user["surname"], "email": user["email"], "phone": user["phone"]}
+    return {"message": "User not found!"}
 
-    check_user = get_user_by_email(data.email)
-    if not check_user:
-        return {"message": "User does not exist!"}
 
-    hash_password = generate_hash(data.password)
+def getStatus(userId):
+    return {"status": get_status(userId)}
 
-    print(check_user["password"], hash_password)
-    if check_user["password"] != hash_password:
-        return {"message": "Invalid password!"}
 
-    token = generate_hash("email:" + check_user["email"] + "name:" + check_user["name"])
+def getTrustScore(userId):
+    return {"trust_score": get_trust_score(userId)}
 
-    return token
+
+def blockNumber(userId, phoneNumber):
+    user = get_user_by_id(userId)
+
+    if phoneNumber in user["blocked_numbers"]:
+        return {"message": "Number already blocked!"}
+
+    block_number(userId, phoneNumber)
+    return {"message": "Number blocked!"}
