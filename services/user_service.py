@@ -4,14 +4,15 @@ from repository.db import get_user_by_phone, get_user_by_id, get_status, get_tru
 def getPhoneNumberInfo(phoneNumber):
     user = get_user_by_phone(phoneNumber)
     if user is not None:
-        return {"name": user["name"] + user["surname"], "email": user["email"], "phone": phoneNumber}
+        return {"name": user["name"] + user["surname"], "email": user["email"], "phone": phoneNumber, "id": user["_id"]}
     return {"message": "User not found!"}
 
 
 def getIdInfo(userId):
     user = get_user_by_id(userId)
     if user is not None:
-        return {"name": user["name"] + user["surname"], "email": user["email"], "phone": user["phone"]}
+        return {"name": user["name"] + user["surname"], "email": user["email"], "phone": user["phone"],
+                "id": user["_id"]}
     return {"message": "User not found!"}
 
 

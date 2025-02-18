@@ -1,16 +1,18 @@
 from smolagents import LiteLLMModel, tool, CodeAgent
 
+from services.message_service import send_message
 from services.user_service import getPhoneNumberInfo, getIdInfo, getStatus, getTrustScore, blockNumber
 
 model = LiteLLMModel(
-    model_id="ollama/llama3.1:8b",
-    api_base="http://localhost:11434",
+    # model_id="ollama/llama3.1:8b",
+    # api_base="http://localhost:11434",
+    model_id="gpt-4o-mini",
 )
 model.verbose = True
 
 
 @tool
-def get_user_info_by_phone(phone: str) -> dict[str, str, str]:
+def get_user_info_by_phone(phone: str) -> dict[str, str, str, str]:
     """
     Get the current user from database by phone number.
 
@@ -21,6 +23,7 @@ def get_user_info_by_phone(phone: str) -> dict[str, str, str]:
         name: Name of the user with the given phone number.
         email: Email of the user with the given phone number.
         phone: Phone number of the user.
+        id: Id of the user with the given phone number.
     """
     user = getPhoneNumberInfo(phone)
     return user
@@ -62,7 +65,7 @@ def get_premium_status(id: str) -> dict[str]:
 @tool
 def get_trust_score_by_id(id: str) -> dict[int]:
     """
-    Get the current user's trust score from database by id.
+    Search for their Trust Scores before doing business with someone! Our artificial intelligence technology is powered by the latest user feedback, spam activities and dozens of different algorithms, and we calculate a trust score for each phone number using this technology. Returns how much you can trust the user and how viable are they.
 
     Args:
         id: Given id to get the user info from database.
@@ -90,15 +93,33 @@ def block_number_by_id(id: str, phoneNumber: str) -> str:
     return result["message"]
 
 
+@tool
+def send_chat_message(from_id: str, phone: str, message: str) -> str:
+    """
+    Sends messages to a given user id.
+
+    Args:
+        from_id: User id of the sender.
+        phone: Phone number of the receiver.
+        message: Message to be sent.
+
+    Returns:
+        str: Message sent.
+    """
+    receiver = getPhoneNumberInfo(phone)
+    result = send_message(from_id, receiver["id"], message)
+    return result["message"]
+
+
 def getUserAgent():
     agent = CodeAgent(
-        max_steps=1,
         tools=[
             get_premium_status,
             get_trust_score_by_id,
             get_user_info_by_id,
             get_user_info_by_phone,
-            block_number_by_id
+            block_number_by_id,
+            send_chat_message,
         ],
         model=model,
         additional_authorized_imports=[
